@@ -9,6 +9,7 @@ var PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // prueba db
+// QUITAR: CUANDO SE TERMINE DE USAR    !!!!!!!!
 let db = {
   usuarios: [
     {
