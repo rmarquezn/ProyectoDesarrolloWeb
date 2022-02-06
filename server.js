@@ -2,6 +2,7 @@
 const express = require("express");
 const { json } = require("express/lib/response");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
 
 // app setup
 const app = express();
@@ -13,10 +14,10 @@ app.use(bodyParser.json());
 let db = {
   usuarios: [
     {
-      id: "1",
+      id: 1,
       name: "Juan",
       email: "juan@gmail.com",
-      password: "1234abcd",
+      //   password:"1234abcd",
       actividades: [
         {
           tipo: "natación",
@@ -33,10 +34,10 @@ let db = {
       ],
     },
     {
-      id: "2",
+      id: 2,
       name: "Laura",
       email: "laura@gmail.com",
-      password: "abcd1234",
+      //   password: "abcd1234",
       actividades: [
         {
           tipo: "box",
@@ -51,6 +52,18 @@ let db = {
           calorias: "40",
         },
       ],
+    },
+  ],
+  login: [
+    {
+      id: 1,
+      hash: "$2b$10$qT5LEBMHTxZZvyjdQMIrruim71BLOZ8k8.1JJmtIliqWjnFXrx74C",
+      email: "juan@gmail.com",
+    },
+    {
+      id: 2,
+      hash: "$2b$10$PSnlYB6BZ3KEkRYZmbdFQuZOzGTncLH/7e77A7NrZ9wTfd8Df9P3e",
+      email: "laura@gmail.com",
     },
   ],
 };
@@ -68,23 +81,29 @@ app.get("/usuarios", (req, res) => {
 
 // login post
 app.post("/login", (req, res) => {
-  if (
-    // CAMBIAR: COMPARAR CON LA BASE DE DATOS EN MONGO    !!!!!!!!
-    req.body.email === db.usuarios[0].email &&
-    req.body.password === db.usuarios[0].password
-  ) {
-    res.json("Login success");
-  } else {
-    res.status(400), json("Login error");
-  }
+  bcrypt.compare(req.body.password, db.login[0].hash, function (err, r) {
+    if (r) {
+      res.json("Login success");
+    } else {
+      res.status(400).json("Login error");
+    }
+  });
 });
 
 // registro post
 app.post("/register", (req, res) => {
   let usr = req.body;
-  //   CAMBIAR: A BASE DE DATOS   !!!!!!!!
+  bcrypt.hash(usr.password, 10, function (err, hash) {
+    // Guardar hash en base de datos
+    db.login.push({
+      id: db.login.length + 1,
+      hash: hash,
+      email: req.body.email,
+    });
+  });
   usr["id"] = db.usuarios.length + 1;
   usr["actividades"] = [];
+  delete usr.password;
   db.usuarios.push(usr);
   res.json(usr);
 });
