@@ -17,7 +17,7 @@ const db_activities_col = "Activities";
  * @param {object} userDocument document of the user that is going to be inserted.
  * Use .then()
  */
-async function createUser(userDocument) {
+async function createUserDB(userDocument) {
     let userInserted = false;
     try {
         await client.connect();
@@ -59,7 +59,7 @@ async function createUser(userDocument) {
  * @param {object} userCredentialsDocument document of the credentials of the user (email and password).
  * Use .catch(console.dir)
  */
-async function findUser(userCredentialsDocument) {
+async function findUserDB(userCredentialsDocument) {
     let userFound = false;
     try {
         await client.connect();
@@ -92,7 +92,7 @@ async function findUser(userCredentialsDocument) {
  * (only weight, height and birthdate can be changed).
  * Use .catch(console.dir)
  */
- async function updateUser(userUpdatedDocument) {
+ async function updateUserDB(userUpdatedDocument) {
     let updatedInformation = false;
     try {
         await client.connect();
